@@ -8,7 +8,7 @@ import io
 from PIL import Image
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for the entire app
+CORS(app,origins=["http://localhost:5173", "https://cancer-one.vercel.app/"])
 
 # Load the saved model
 model = load_model('MobileNetV2.keras')
