@@ -6,6 +6,7 @@ import numpy as np
 import tensorflow as tf
 import io
 from PIL import Image
+import os
 
 app = Flask(__name__)
 CORS(app,origins=["http://localhost:5173", "https://cancer-one.vercel.app"])
@@ -57,4 +58,5 @@ def predict():
         return jsonify({'error': 'Prediction failed'}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # Render assigns PORT dynamically
+    app.run(host="0.0.0.0", port=port)
