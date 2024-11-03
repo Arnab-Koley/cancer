@@ -99,6 +99,8 @@ function App() {
         import.meta.env.MODE === "production"
           ? import.meta.env.VITE_API_PRODUCTION_URL
           : import.meta.env.VITE_API_DEVELOPMENT_URL;
+
+        console.log|(serverUrl);
   
       const response = await fetch(serverUrl, {
         method: "POST",
