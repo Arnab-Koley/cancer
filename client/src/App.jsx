@@ -107,6 +107,9 @@ function App() {
         body: formData,
         credentials: "include",
       });
+
+      const data = await response.json();
+      console.log(data);
   
       // Check if response is ok
       if (!response.ok) {
@@ -114,7 +117,7 @@ function App() {
         throw new Error(errorData.error || "An error occurred while processing your request.");
       }
   
-      const data = await response.json();
+      // const data = await response.json();
       setPrediction(data.class);
       setConfidence(data.confidence);
       setStatus(data.status);
