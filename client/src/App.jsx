@@ -41,45 +41,95 @@ function App() {
     }
   };
 
+  // const handleSubmit = async (event) => {
+  //   event.preventDefault();
+  //   if (!selectedFile) {
+  //     setError("No image selected!");
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append("file", selectedFile);
+
+  //   try {
+  //     setIsLoading(true);
+  //     setError("");
+  //     const serverUrl =
+  //       import.meta.env.MODE === "production"
+  //         ? import.meta.env.VITE_API_PRODUCTION_URL
+  //         : import.meta.env.VITE_API_DEVELOPMENT_URL;
+  //     const response = await fetch(serverUrl, {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error("Network response was not ok");
+  //     }
+
+  //     const data = await response.json();
+  //     setPrediction(data.class);
+  //     setConfidence(data.confidence); // Set confidence percentage from response
+  //     setStatus(data.status);
+  //   } catch (error) {
+  //     console.error("Error during prediction:", error);
+  //     setStatus("Oops! Seems like this is not a skin image!");
+  //     setConfidence(""); // Clear confidence if an error occurs
+  //     setPrediction("");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!selectedFile) {
       setError("No image selected!");
       return;
     }
-
+  
     const formData = new FormData();
     formData.append("file", selectedFile);
-
+  
     try {
       setIsLoading(true);
-      setError("");
+      setError(""); // Clear any previous error messages
+  
       const serverUrl =
         import.meta.env.MODE === "production"
           ? import.meta.env.VITE_API_PRODUCTION_URL
           : import.meta.env.VITE_API_DEVELOPMENT_URL;
+  
       const response = await fetch(serverUrl, {
         method: "POST",
         body: formData,
       });
-
+  
+      // Check if response is ok
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "An error occurred while processing your request.");
       }
-
+  
       const data = await response.json();
       setPrediction(data.class);
-      setConfidence(data.confidence); // Set confidence percentage from response
+      setConfidence(data.confidence);
       setStatus(data.status);
     } catch (error) {
       console.error("Error during prediction:", error);
-      setStatus("Oops! Seems like this is not a skin image!");
-      setConfidence(""); // Clear confidence if an error occurs
-      setPrediction("");
+      // Check if the error is due to network/server issues
+      if (error.message.includes("NetworkError")) {
+        setError("Server is currently unavailable. Please try again later.");
+      } else {
+        setStatus("Oops! Seems like this is not a skin image!");
+        setConfidence(""); // Clear confidence if an error occurs
+        setPrediction("");
+      }
     } finally {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="flex flex-col items-center bg-[#15202b] h-screen w-full">
